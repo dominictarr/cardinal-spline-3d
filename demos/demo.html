@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<!-- *******************************************************************
+	 **	    Cardinal spline for canvas extension demo.
+	 **
+	 **	    (c) Epistemex (www.epistemex.com).
+	 ** 	License: MIT. May be used in any project.
+	 *******************************************************************
+-->
+
+<head>
+	<title>Canvas cardinal (smooth) curve extension - Epistemex</title>
+
+	<style>
+		body {
+			width:100%;
+			padding:0;
+			margin:0;
+			font:14px sans-serif;
+			color:#ccd;
+			background-color:#272727;
+			}
+		h1 {
+			font-size:32px;
+			font-weight: normal;
+			margin:20px 0;
+			color:#fff;
+			}
+		p {
+			line-height: 19px;
+			}
+		#container {
+			width:1024px;
+			margin:0 auto;
+			}
+		#demoCanvas {
+			background-color: #b7b7bb;
+			margin-bottom:12px;
+			cursor: crosshair;
+			}
+		.options {
+			font-size:12px;
+			padding:9px 5px 9px 5px;
+			background-color:#555;
+			color:#fff;
+			width:1014px;
+			margin:0;
+			}
+		.options>input[type=text] {
+			width:30px;
+			margin-left:5px;
+			text-align:center;
+			border:1px solid #fff;
+			}
+		.options>input[type=range] {
+			width:120px;
+			}
+		.options>span {
+			color:#ff7;
+			display:inline-block;
+			width:30px;
+			text-align: right;
+			}
+		button {
+			border:0;
+			background:#888;
+			border-radius:2px;
+			font-weight:bold;
+			color:#fff;
+			padding:3px 9px;
+			float:right;
+			margin:-3px 3px 0 0;
+			}
+		button:hover {
+			background:#ca2;
+			}
+		.options>label {
+			margin-left:12px;
+			}
+		input {
+			height: 9px;
+			vertical-align: middle;
+			}
+		a {
+			color:#fff;
+			text-decoration: none;
+			}
+		a:hover {
+			color:#ffa;
+			text-decoration: underline;
+			}
+		.footerl {
+			float:left;
+			}
+		.footerr {
+			float:right;
+			margin-top:-7px;
+			}
+	</style>
+</head>
+<body>
+
+	<div id="container">
+
+		<h1>Cardinal spline for canvas</h1>
+
+		<p>Draw a smooth curve (cardinal spline, or Catmull-Rom with tension option) through a point set with open or closed end, variable tension and number of segments.
+		The implementation is highly optimized for performance still preserving quality.</p>
+
+		<!-- Option panel -->
+		<div class="options">
+			<label for="numTension">Tension:</label>
+			<input id="numTension" type="range" value="5" min="-10" max="20"/>
+			<span id="numTensionValue">0.5</span>
+
+			<label for="numSegments">Segments:</label>
+			<input id="numSegments" type="range" value="25" min=1 max=100 />
+			<span id="numSegmentsValue">25</span>
+
+			<label for="chkClosed">Closed:</label>
+			<input id="chkClosed" type="checkbox">
+
+			<label for="chkPoints">Points:</label>
+			<input id="chkPoints" type="checkbox" checked>
+
+			<label for="chkFill">Fill:</label>
+			<input id="chkFill" type="checkbox">
+
+			<button onclick="randomize();renderCurve()">Randomize</button>
+		</div>
+
+		<canvas id="demoCanvas" width="1024" height="450"></canvas>
+
+		<div class="footerl">
+			&copy; by <a href="http://github.com/epistemex/">Epistemex</a>.
+			<a href="https://github.com/epistemex/cardinal-spline-js/">Cardinal spline</a> is licensed with a <a href="http://opensource.org/licenses/MIT">MIT license</a>.
+		</div>
+		<div class="footerr">
+			<img src="data:image/png;base64,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">
+		</div>
+	</div>
+
+<script src="../curve.min.js"></script>
+<script>
+
+	var	canvas = document.getElementById('demoCanvas'),
+		ctx = canvas.getContext("2d"),
+		w = canvas.width, h,
+		isDown = false, pIndex = -1,
+		pts = [];
+
+	setCanvas();
+
+	function setCanvas() {
+		var ih = window.innerHeight,
+		    r = canvas.getBoundingClientRect(),
+		    nh = Math.max(100, ih - r.top * 1.5);
+
+		canvas.height = h = nh;
+
+		ctx.translate(0.5, 0.5);
+		ctx.lineJoin = 'round';
+
+		randomize();
+		renderCurve();
+	}
+
+	window.onresize = setCanvas;
+
+	document.getElementById('numSegments').addEventListener('input', renderCurve);
+	document.getElementById('numTension').addEventListener('input', renderCurve);
+	document.getElementById('chkPoints').addEventListener('input', renderCurve);
+	document.getElementById('chkClosed').addEventListener('input', renderCurve);
+	document.getElementById('chkFill').addEventListener('input', renderCurve);
+
+	document.getElementById('numSegments').addEventListener('change', renderCurve);
+	document.getElementById('numTension').addEventListener('change', renderCurve);
+	document.getElementById('chkPoints').addEventListener('change', renderCurve);
+	document.getElementById('chkClosed').addEventListener('change', renderCurve);
+	document.getElementById('chkFill').addEventListener('change', renderCurve);
+
+	canvas.onmousedown = function(e) {
+		var pos = getPos(e),
+		    i = 0,
+		    m = 5;
+
+		pIndex = -1;
+		isDown = false;
+
+		for(; i < pts.length; i += 2) {
+			if (pos.x >= pts[i] - m && pos.x < pts[i] + m &&
+				pos.y >= pts[i+1] - m && pos.y < pts[i+1] + m) {
+				isDown = true;
+				pIndex = i;
+			}
+		}
+	};
+
+	window.onmousemove = function(e) {
+		if (isDown) {
+			var pos = getPos(e);
+			pts[pIndex] = pos.x;
+			pts[pIndex+1] = pos.y;
+			renderCurve()
+		}
+	};
+
+	window.onmouseup = function() {
+		isDown = false;
+	};
+
+	function getPos(e) {
+		var r = canvas.getBoundingClientRect();
+		return {x: e.clientX - r.left, y: e.clientY - r.top}
+	}
+
+	/*
+	 *	Randomize points
+	*/
+	function randomize() {
+
+		var numOfPoints = 7; //min. 2
+
+		pts = [];
+
+		for(var i = 0; i < numOfPoints; i++) {
+			pts.push((w * Math.random() * 0.9 + w * 0.05)|0,
+					 (h * Math.random() * 0.9 + h * 0.05)|0);
+		}
+	}
+
+	/*
+	 *	Collect options
+	 */
+	function CurveOptions() {
+		this.closed = !!document.getElementById('chkClosed').checked;
+		this.fill = !!document.getElementById('chkFill').checked;
+		this.points = !!document.getElementById('chkPoints').checked;
+		this.segments = +document.getElementById('numSegments').value;
+		this.tension = document.getElementById('numTension').value * 0.1;
+	}
+
+	/*
+	 *	Draw curve with current settings and points
+	 */
+	function renderCurve() {
+
+		ctx.clearRect(0, 0, w, h);
+
+		// get current options
+		var o = new CurveOptions();
+
+		document.getElementById('numSegmentsValue').innerHTML = o.segments;
+		document.getElementById('numTensionValue').innerHTML = o.tension.toFixed(1);
+
+		// draw our cardinal spline
+		ctx.beginPath();
+		ctx.moveTo(pts[0], pts[1]);
+		ctx.curve(pts, o.tension, o.segments, o.closed);
+		if (o.closed && !o.fill) ctx.closePath();
+		ctx.strokeStyle = '#6677cc';
+		ctx.lineWidth = 3;
+		if (o.fill) {
+			ctx.fillStyle = '#ca7';
+			ctx.fill();
+		}
+		ctx.stroke()
+	}
+
+</script>
+</body>
+</html>
