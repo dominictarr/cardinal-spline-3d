@@ -2,7 +2,7 @@ Change log for Cardinal Spline JS
 ---------------------------------
 
 2.3.7
-BUMP: Bumping version for bower. Moving from GitHub to GitLab.
+BUMP: Bumping version for bower.
 
 2.3.6
 ADD: Support empty point array as input (issue #5). Returns empty Float32Array.
