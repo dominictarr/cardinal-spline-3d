@@ -35,7 +35,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
     l = points.length,
     rPos = 0,
     rLen = (l-2) * numOfSeg + 2 + (close ? 2 * numOfSeg: 0),
-    res = new Float32Array(rLen),
+    res = [],
     cache = new Float32Array((numOfSeg + 2) << 2),
     cachePtr = 4;
 
@@ -77,10 +77,15 @@ function getCurvePoints(points, tension, numOfSeg, close) {
   if (close) {
     //l = points.length;
     pts = [];
-    pts.push(points[l - 4], points[l - 3],
-         points[l - 2], points[l - 1],               // second last and last
-         points[0], points[1],
-         points[2], points[3]);                 // first and second
+    pts.push(
+      points[l - 4], points[l - 3],
+
+      points[l - 2], points[l - 1],               // second last and last
+
+      points[0], points[1],
+
+      points[2], points[3]
+    );                 // first and second
     parse(pts, cache, 4, tension);
   }
 
@@ -88,15 +93,15 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
     for (var i = 2, t; i < l; i += 2) {
 
-      var pt1 = pts[i],
-        pt2 = pts[i+1],
-        pt3 = pts[i+2],
-        pt4 = pts[i+3],
+      var pt1x = pts[i],
+        pt1y = pts[i+1],
+        pt2x = pts[i+2],
+        pt2y = pts[i+3],
 
-        t1x = (pt3 - pts[i-2]) * tension,
-        t1y = (pt4 - pts[i-1]) * tension,
-        t2x = (pts[i+4] - pt1) * tension,
-        t2y = (pts[i+5] - pt2) * tension,
+        t1x = (pt2x - pts[i-2]) * tension,
+        t1y = (pt2y - pts[i-1]) * tension,
+        t2x = (pts[i+4] - pt1x) * tension,
+        t2y = (pts[i+5] - pt1y) * tension,
         c = 0, c1, c2, c3, c4;
 
       for (t = 0; t < numOfSeg; t++) {
@@ -106,18 +111,22 @@ function getCurvePoints(points, tension, numOfSeg, close) {
         c3 = cache[c++];
         c4 = cache[c++];
 
-        res[rPos++] = c1 * pt1 + c2 * pt3 + c3 * t1x + c4 * t2x;
-        res[rPos++] = c1 * pt2 + c2 * pt4 + c3 * t1y + c4 * t2y;
+        res.push([
+          c1 * pt1x + c2 * pt2x + c3 * t1x + c4 * t2x,
+          c1 * pt1y + c2 * pt2y + c3 * t1y + c4 * t2y
+        ])
       }
     }
   }
 
   // add last point
   l = close ? 0 : points.length - 2;
-  res[rPos++] = points[l++];
-  res[rPos] = points[l];
+  res.push([points[l++], points[l]])
 
   return res
 }
+
+
+
 
 
