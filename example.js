@@ -13,12 +13,7 @@ for(var i = 0; i < 20; i++) {
   input.push([Math.random()*canvas.width, Math.random()*canvas.height])
 }
 
-var _input = []
-input.forEach(function (p) {
-  _input.push(p[0]); _input.push(p[1])
-})
-
-var a = spline(_input, 0.5, 100)
+var a = spline(input, 0.5, 100)
 
 ctx.beginPath()
 for(var i = 0; i < a.length; i+=2) {
@@ -35,4 +30,5 @@ for(var i = 0; i < input.length; i++)
 console.log(input)
 
 console.log("RED")
+
 
