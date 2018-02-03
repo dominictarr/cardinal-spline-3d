@@ -31,7 +31,6 @@ function getCurvePoints(points, tension, numOfSeg, close) {
   numOfSeg = typeof numOfSeg === "number" ? numOfSeg : 25;
 
   var pts,                              // for cloning point array
-    i = 1,
     l = points.length,
     rPos = 0,
     rLen = (l-2) * numOfSeg + 2 + (close ? 2 * numOfSeg: 0),
@@ -55,7 +54,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
   // cache inner-loop calculations as they are based on t alone
   cache[0] = 1;                            // 1,0,0,0
 
-  for (; i < numOfSeg; i++) {
+  for (var i = 1; i < numOfSeg; i++) {
 
     var st = i / numOfSeg,
       st2 = st * st,
@@ -125,6 +124,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   return res
 }
+
 
 
 
