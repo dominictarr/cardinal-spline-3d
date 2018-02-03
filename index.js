@@ -32,8 +32,6 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   var pts,                              // for cloning point array
     l = points.length,
-    rPos = 0,
-    rLen = (l-2) * numOfSeg + 2 + (close ? 2 * numOfSeg: 0),
     res = [],
     cache = new Float32Array((numOfSeg + 2) << 2),
     cachePtr = 4;
@@ -75,6 +73,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   if (close) {
     //l = points.length;
+    throw new Error('close not supported')
     pts = [];
     pts.push(
       points[l - 4], points[l - 3],
@@ -124,9 +123,6 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   return res
 }
-
-
-
 
 
 
