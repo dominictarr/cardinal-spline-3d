@@ -30,7 +30,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
   tension = typeof tension === "number" ? tension : 0.5;
   numOfSeg = typeof numOfSeg === "number" ? numOfSeg : 25;
 
-  var pts,                              // for cloning point array
+  var pts, // for cloning point array
     l = points.length,
     res = [],
     cache = new Float32Array((numOfSeg + 2) << 2),
@@ -44,9 +44,9 @@ function getCurvePoints(points, tension, numOfSeg, close) {
     pts.push(points[0], points[1]);                 // first point as last point
   }
   else {
-    pts.unshift(points[1]);                      // copy 1. point and insert at beginning
+    //duplicate end points (these act as control points)
     pts.unshift(points[0]);
-    pts.push(points[l - 2], points[l - 1]);              // duplicate end-points
+    pts.push(points[l - 1]);
   }
 
   // cache inner-loop calculations as they are based on t alone
@@ -89,17 +89,17 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   function parse(pts, cache, l, tension) {
 
-    for (var i = 2, t; i < l; i += 2) {
+    for (var i = 1, t; i < l; i ++) {
 
-      var pt1x = pts[i],
-        pt1y = pts[i+1],
-        pt2x = pts[i+2],
-        pt2y = pts[i+3],
+      var pt1x = pts[i][0],
+        pt1y = pts[i][1],
+        pt2x = pts[i+1][0],
+        pt2y = pts[i+1][1],
 
-        t1x = (pt2x - pts[i-2]) * tension,
-        t1y = (pt2y - pts[i-1]) * tension,
-        t2x = (pts[i+4] - pt1x) * tension,
-        t2y = (pts[i+5] - pt1y) * tension,
+        t1x = (pt2x - pts[i-1][0]) * tension,
+        t1y = (pt2y - pts[i-1][1]) * tension,
+        t2x = (pts[i+2][0] - pt1x) * tension,
+        t2y = (pts[i+2][1] - pt1y) * tension,
         c = 0, c1, c2, c3, c4;
 
       for (t = 0; t < numOfSeg; t++) {
@@ -119,10 +119,8 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   // add last point
   l = close ? 0 : points.length - 2;
-  res.push([points[l++], points[l]])
+  res.push([points[l]])
 
   return res
 }
-
-
 
