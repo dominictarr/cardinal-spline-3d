@@ -9,7 +9,7 @@ var ctx = canvas.getContext('2d')
 var spline = require('./')
 
 var input = []
-for(var i = 0; i < 20; i++) {
+for(var i = 0; i < 10; i++) {
   input.push([Math.random()*canvas.width, Math.random()*canvas.height])
 }
 
@@ -26,4 +26,13 @@ for(var i = 0; i < a.length; i+=2) {
   else ctx.moveTo(a[i], a[i+1])
 }
 ctx.stroke()
+
+ctx.fillStyle = 'red'
+for(var i = 0; i < input.length; i++)
+  ctx.fillRect(input[i][0],input[i][1], 10, 10)
+ctx.stroke()
+
+console.log(input)
+
+console.log("RED")
 
