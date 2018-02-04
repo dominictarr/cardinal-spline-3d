@@ -88,19 +88,27 @@ function getCurvePoints(points, tension, numOfSeg, close) {
   }
 
   function parse(pts, cache, l, tension) {
+    var z = pts[0].length == 3
 
     for (var i = 1, t; i < l; i ++) {
 
-      var pt1x = pts[i][0],
-        pt1y = pts[i][1],
-        pt2x = pts[i+1][0],
-        pt2y = pts[i+1][1],
+      var pt1x = pts[i][0]
+      var pt1y = pts[i][1]
+      var pt1z = pts[i][2] || 0
 
-        t1x = (pt2x - pts[i-1][0]) * tension,
-        t1y = (pt2y - pts[i-1][1]) * tension,
-        t2x = (pts[i+2][0] - pt1x) * tension,
-        t2y = (pts[i+2][1] - pt1y) * tension,
-        c = 0, c1, c2, c3, c4;
+      var pt2x = pts[i+1][0]
+      var pt2y = pts[i+1][1]
+      var pt2z = pts[i+1][2] || 0
+
+      var t1x = (pt2x - pts[i-1][0]) * tension
+      var t1y = (pt2y - pts[i-1][1]) * tension
+      var t1z = (pt2z - (pts[i-1][2]||0)) * tension
+
+      var t2x = (pts[i+2][0] - pt1x) * tension
+      var t2y = (pts[i+2][1] - pt1y) * tension
+      var t2z = ((pts[i+2][2]||0) - pt1z) * tension
+
+      var c = 0, c1, c2, c3, c4;
 
       for (t = 0; t < numOfSeg; t++) {
 
@@ -111,7 +119,8 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
         res.push([
           c1 * pt1x + c2 * pt2x + c3 * t1x + c4 * t2x,
-          c1 * pt1y + c2 * pt2y + c3 * t1y + c4 * t2y
+          c1 * pt1y + c2 * pt2y + c3 * t1y + c4 * t2y,
+          c1 * pt1z + c2 * pt2z + c3 * t1z + c4 * t2z
         ])
       }
     }
@@ -119,7 +128,7 @@ function getCurvePoints(points, tension, numOfSeg, close) {
 
   // add last point
   l = close ? 0 : points.length - 2;
-  res.push([points[l]])
+  res.push(points[l])
 
   return res
 }
