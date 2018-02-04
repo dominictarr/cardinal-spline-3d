@@ -1,6 +1,6 @@
 {
   "name": "cardinal-spline-3d",
-  "version": "2.3.6",
+  "version": "3.0.0",
   "description": "Smooth curve through points with tension and resolution options.",
   "main": "curve_calc.js",
   "scripts": {
