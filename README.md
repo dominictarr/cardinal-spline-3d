@@ -4,7 +4,7 @@ Generate cardinal splines in 2 or 3 dimentions
 
 ![2d](./images/2d.png)
 
-![3d](./images/2d.png)
+![3d](./images/3d.png)
 (rendered using [npmcad](https://github.com/dominictarr/npmcad-viewer))
 
 # example
